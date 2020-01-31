@@ -2,8 +2,7 @@ require('dotenv').config();
 
 var express = require('express');
 var passport = require('passport');
-var Strategy = require('passport-facebook').Strategy;
-
+var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
 
 // Configure the Facebook strategy for use by Passport.
 //
@@ -12,19 +11,17 @@ var Strategy = require('passport-facebook').Strategy;
 // behalf, along with the user's profile.  The function must invoke `cb`
 // with a user object, which will be set at `req.user` in route handlers after
 // authentication.
-passport.use(new Strategy({
-    clientID: process.env['FACEBOOK_CLIENT_ID'],
-    clientSecret: process.env['FACEBOOK_CLIENT_SECRET'],
-    callbackURL: '/return'
+passport.use(new GoogleStrategy({
+    clientID:     process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:8080/auth/google/callback",
+    passReqToCallback   : true
   },
-  function(accessToken, refreshToken, profile, cb) {
-    // In this example, the user's Facebook profile is supplied as the user
-    // record.  In a production-quality application, the Facebook profile should
-    // be associated with a user record in the application's database, which
-    // allows for account linking and authentication with other identity
-    // providers.
-    return cb(null, profile);
-  }));
+  function(request, accessToken, refreshToken, profile, done) {
+      console.log(profile);
+      return done(null, profile);
+  }
+));
 
 
 // Configure Passport authenticated session persistence.
@@ -64,20 +61,35 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveU
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/assets', express.static('assets'))
 
 // Define routes.
-app.get('/',
+app.get('/', require('connect-ensure-login').ensureLoggedIn(),
   function(req, res) {
+    console.log(req.user);
     res.render('home', { user: req.user });
   });
+
+// app.get('/login',
+//   function(req, res){
+//     res.render('login');
+//   });
 
 app.get('/login',
   function(req, res){
     res.render('login');
   });
 
-app.get('/login/facebook',
-  passport.authenticate('facebook'));
+app.get('/auth/google',
+  passport.authenticate('google', { scope: 
+      [ 'https://www.googleapis.com/auth/userinfo.profile' ] }
+));
+
+app.get( '/auth/google/callback', 
+    passport.authenticate( 'google', { 
+        successRedirect: '/home',
+        failureRedirect: '/auth/google/failure'
+}));
 
 app.get('/return', 
   passport.authenticate('facebook', { failureRedirect: '/login' }),
@@ -89,6 +101,18 @@ app.get('/profile',
   require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
     res.render('profile', { user: req.user });
-  });
+  }); 
+
+app.get('/home',
+  require('connect-ensure-login').ensureLoggedIn(),
+  function(req, res){
+    console.log(req.user)
+    res.render('home', { user: req.user });
+  }); 
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 app.listen(process.env['PORT'] || 8080);

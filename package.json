@@ -1,21 +1,18 @@
 {
-  "name": "express-4.x-facebook-example",
-  "version": "0.0.0",
-  "description": "Express 4.x app using Passport for authentication with Facebook.",
+  "name": "bandcast",
+  "version": "1.0.0",
+  "description": "Multi-track player for bands",
   "keywords": [
     "example",
     "express",
     "passport"
   ],
-  "author": "Jared Hanson",
-  "license": "Unlicense",
-  "homepage": "https://github.com/passport/express-4.x-facebook-example",
+  "author": "Lee Yang",
+  "license": "MIT",
+  "homepage": "Credit: https://github.com/passport/express-4.x-facebook-example",
   "repository": {
     "type": "git",
-    "url": "git://github.com/passport/express-4.x-facebook-example.git"
-  },
-  "bugs": {
-    "url": "https://github.com/passport/express-4.x-facebook-example/issues"
+    "url": "git+https://github.com/leesyang/bandcast.git"
   },
   "dependencies": {
     "body-parser": "^1.13.2",
@@ -27,6 +24,24 @@
     "express-session": "^1.11.3",
     "morgan": "^1.6.1",
     "passport": "^0.4.0",
-    "passport-facebook": "^2.0.0"
+    "passport-facebook": "^2.0.0",
+    "passport-google-oauth2": "^0.2.0",
+    "passport-google-oauth20": "^2.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "bugs": {
+    "url": "https://github.com/leesyang/bandcast/issues"
+  },
+  "devDependencies": {
+    "gulp": "^4.0.2",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-clean": "^0.4.0",
+    "gulp-install": "^1.1.0",
+    "gulp-open": "^3.0.1",
+    "gulp-sass": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.4"
   }
 }
