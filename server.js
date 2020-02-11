@@ -58,6 +58,8 @@ app.get('/auth/google/failure', function(req, res) {
   res.render('login');
 });
 
+
+// ------ views ------
 app.get('/profile',
   connectEnsure.ensureLoggedIn(),
   function(req, res){
@@ -71,9 +73,13 @@ app.get('/home',
     res.render('home', { user: req.user });
   }); 
 
+
+
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 });
 
+
+// ---- app functions ----
 app.listen(process.env['PORT'] || 8080);
