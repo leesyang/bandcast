@@ -3,8 +3,9 @@ require('dotenv').config();
 var express = require('express');
 var connectEnsure = require('connect-ensure-login');
 var passport = require('passport');
+var bodyparser = require('body-parser')
 var { googleAuth, googleAuthCb, googleStrategy } = require('./middleware/auth.js');
-
+var { s3, s3params } = require('./middleware/aws.js');
 
 // Configure Passport authenticated session persistence for non-database app.
 passport.serializeUser(function(user, cb) {
@@ -49,7 +50,33 @@ app.get('/login',
     res.render('login');
   });
 
-// ----- auth routes -----
+// aws routes
+app.post('/generatepresignedurl',
+  bodyparser.json(),
+  //connectEnsure.ensureLoggedIn(),
+  function(req, res) {
+    // file
+    var file = req.body;
+    console.log("this is the body")
+    console.log(req.body)
+
+    var params = Object.assign(s3params);
+    params.Key = "uploads/helloworld.txt";
+
+    res.json({ message: "success" });
+
+    // s3.getSignedUrl('putObject', params, function(err, url) {
+    //   if (err) {
+    //     console.log('There was an error');
+    //     console.log(err);
+    //   } else if (url) {
+    //     res.json({ success: true, message: 'AWS presigned url generated successfully', url })
+    //   }
+    // })
+})
+
+
+// auth routes
 app.get('/auth/google', googleAuth);
 
 app.get( '/auth/google/callback', googleAuthCb);
@@ -59,7 +86,7 @@ app.get('/auth/google/failure', function(req, res) {
 });
 
 
-// ------ views ------
+// views
 app.get('/profile',
   connectEnsure.ensureLoggedIn(),
   function(req, res){
@@ -81,5 +108,5 @@ app.get('/logout', function(req, res){
 });
 
 
-// ---- app functions ----
+// app functions
 app.listen(process.env['PORT'] || 8080);

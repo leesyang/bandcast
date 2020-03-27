@@ -15,7 +15,8 @@
     "url": "git+https://github.com/leesyang/bandcast.git"
   },
   "dependencies": {
-    "body-parser": "^1.13.2",
+    "aws-sdk": "^2.647.0",
+    "body-parser": "^1.19.0",
     "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.3.5",
     "dotenv": "^6.2.0",
